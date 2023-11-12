@@ -13,7 +13,6 @@ namespace BloodyEncounters.Configuration
         public static ConfigEntry<bool> SkipPlayersInCastle { get; private set; }
         public static ConfigEntry<int> EncounterTimerMin { get; private set; }
         public static ConfigEntry<int> EncounterTimerMax { get; private set; }
-        public static ConfigEntry<int> EncounterLength { get; private set; }
         public static ConfigEntry<int> EncounterMinLevel { get; private set; }
         public static ConfigEntry<string> EncounterMessageTemplate { get; private set; }
         public static ConfigEntry<string> RewardMessageTemplate { get; private set; }
@@ -40,7 +39,6 @@ namespace BloodyEncounters.Configuration
             SkipPlayersInCombat = _mainConfig.Bind("Main", "SkipPlayersInCombat", false, "When enabled, players who are in combat are excluded from the random encounters.");
             EncounterTimerMin = _mainConfig.Bind("Main", "EncounterTimerMin", 1200, "Minimum seconds before a new encounter is initiated. This value is divided by the online users count.");
             EncounterTimerMax = _mainConfig.Bind("Main", "EncounterTimerMax", 2400, "Maximum seconds before a new encounter is initiated. This value is divided by the online users count.");
-            EncounterLength = _mainConfig.Bind("Main", "EncounterLength", 120, "Maximum seconds until the player can kill the NPC for a reward.");
             EncounterMinLevel = _mainConfig.Bind("Main", "EncounterMinLevel", 10, "The lower value for the Player level for encounter.");
             EncounterMessageTemplate = _mainConfig.Bind("Main", "EncounterMessageTemplate", "You have encountered a <color=#daa520>{0}</color>. You have <color=#daa520>{1}</color> seconds to kill it for a chance of a random reward.", "System message template for the encounter.");
             RewardMessageTemplate = _mainConfig.Bind("Main", "RewardMessageTemplate", "Congratulations. Your reward: <color={0}>{1}</color>.", "System message template for the reward.");

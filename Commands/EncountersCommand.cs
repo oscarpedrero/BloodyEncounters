@@ -43,24 +43,6 @@ namespace BloodyEncounters.Commands
             ctx.Reply($"Sending an ambush to {PlayerName}.");
         }
 
-        [Command("reload", usage: "", description: "Reloads the configuration without restarting the server.", adminOnly: true)]
-        public static void ReloadCommand(ChatCommandContext ctx)
-        {
-            var currentStatus = PluginConfig.Enabled.Value;
-            PluginConfig.Initialize();
-            if (!currentStatus && PluginConfig.Enabled.Value)
-            {
-                TimerSystem.StartEncounterTimer();
-            }
-
-            if (!PluginConfig.Enabled.Value)
-            {
-                TimerSystem._encounterTimer.Stop();
-            }
-
-            ctx.Reply($"Reloaded configuration");
-        }
-
         [Command("enable", usage: "", description: "Enables the random encounter timer.", adminOnly: true)]
         public static void EnableCommand(ChatCommandContext ctx)
         {

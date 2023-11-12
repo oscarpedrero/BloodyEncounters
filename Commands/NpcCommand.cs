@@ -8,6 +8,28 @@ namespace BloodyEncounters.Commands
     [CommandGroup("encounter npc")]
     internal class NpcCommand
     {
+
+        [Command("list", usage: "", description: "List of merchant", adminOnly: true)]
+        public void ListMerchant(ChatCommandContext ctx)
+        {
+
+            var npcs = Database.NPCS;
+
+            if (npcs.Count == 0)
+            {
+                throw ctx.Error($"There are no npcs created");
+            }
+            ctx.Reply($"NPCS List");
+            ctx.Reply($"----------------------------");
+            ctx.Reply($"--");
+            foreach (var npc in npcs)
+            {
+                ctx.Reply($"Merchant {npc.name}");
+                ctx.Reply($"--");
+            }
+            ctx.Reply($"----------------------------");
+        }
+
         [Command("create", usage: "<NameOfNPC> <PrefabGUIDOfNPC> <LevelsAbovePlayer> <LifeTime>", description: "Create a NPC", adminOnly: true)]
         public void CreateNPC(ChatCommandContext ctx, string npcName, int prefabGUID, int levelAbove, int lifeTime)
         {
