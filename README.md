@@ -7,6 +7,9 @@
 <details>
 <summary>Changelog</summary>
 
+`1.5.0`
+- Added World Boss
+
 `1.0.0`
 - Initial public release of the mod
 </details>
