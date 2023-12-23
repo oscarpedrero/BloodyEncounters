@@ -28,7 +28,7 @@ namespace BloodyEncounters.Commands
                     {
                         ctx.Reply($"Item {item.ItemID}");
                         ctx.Reply($"Stack {item.Stack}");
-                        ctx.Reply($"Stack {item.Chance}");
+                        ctx.Reply($"Chance {item.Chance}");
                         ctx.Reply($"--");
                     }
                     ctx.Reply($"----------------------------");
