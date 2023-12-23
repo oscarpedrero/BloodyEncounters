@@ -13,7 +13,7 @@ namespace BloodyEncounters.Commands
     internal class ItemsWorldBossommand
     {
 
-        [Command("list", usage: "", description: "List items of WorldBoss drop", adminOnly: true)]
+        [Command("list", usage: "<NameOfWorldBoss>", description: "List items of WorldBoss drop", adminOnly: true)]
         public void ListWorldBossItems(ChatCommandContext ctx, string WorldBossName)
         {
 
@@ -28,6 +28,7 @@ namespace BloodyEncounters.Commands
                     {
                         ctx.Reply($"Item {item.ItemID}");
                         ctx.Reply($"Stack {item.Stack}");
+                        ctx.Reply($"Stack {item.Chance}");
                         ctx.Reply($"--");
                     }
                     ctx.Reply($"----------------------------");
