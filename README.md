@@ -7,7 +7,7 @@
 <details>
 <summary>Changelog</summary>
 
-`0.0.1`
+`1.0.0`
 - Initial public release of the mod
 </details>
 

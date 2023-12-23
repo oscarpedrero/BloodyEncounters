@@ -9,7 +9,7 @@ namespace BloodyEncounters.Commands
     internal class NpcCommand
     {
 
-        [Command("list", usage: "", description: "List of merchant", adminOnly: true)]
+        [Command("list", usage: "", description: "List of npc", adminOnly: true)]
         public void ListMerchant(ChatCommandContext ctx)
         {
 
@@ -24,7 +24,7 @@ namespace BloodyEncounters.Commands
             ctx.Reply($"--");
             foreach (var npc in npcs)
             {
-                ctx.Reply($"Merchant {npc.name}");
+                ctx.Reply($"NPC {npc.name}");
                 ctx.Reply($"--");
             }
             ctx.Reply($"----------------------------");

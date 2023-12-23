@@ -9,7 +9,7 @@ using System;
 namespace BloodyEncounters.Commands
 {
 
-    [CommandGroup("encounter items")]
+    [CommandGroup("encounter items npc")]
     internal class ItemsCommand
     {
 

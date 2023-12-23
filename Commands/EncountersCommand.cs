@@ -66,5 +66,6 @@ namespace BloodyEncounters.Commands
             TimerSystem._encounterTimer.Stop();
             ctx.Reply("Disabled.");
         }
+        
     }
 }
