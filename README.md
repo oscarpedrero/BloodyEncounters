@@ -43,7 +43,7 @@ It's crucial to note that for any command containing a name argument such as `<N
   -  **NameOfNPC**: The NPC name you want to remove.
   - Example: `.encounter npc remove "Rifle Man"`
 ```ansi
-.encounter items add <NameOfNPC> <ItemName> <ItemPrefabID> <Stack>
+.encounter npc items add <NameOfNPC> <ItemName> <ItemPrefabID> <Stack>
 ```
 - Adds items/rewards to the randomized pool that the player will receive from killing a particular NPC encounter.
   - **NameOfNPC**: The NPC name to which you want to add items.
@@ -52,10 +52,10 @@ It's crucial to note that for any command containing a name argument such as `<N
   - **Stack**: The quantity of items the player will gain upon winning the encounter (e.g., x25 Blood Potions).
   - Example: `.encounter items add "Rifle Man" "Blood Rose Potion" 429052660 25`
 ```ansi
-.encounter items list (NPCName)
+.encounter npc items list (NPCName)
 ```
 - Displays the list of items included within a particular NPC.
-  - Example: `.encounter items list "Rifle Man"`
+  - Example: `.encounter npc items list "Rifle Man"`
 ```ansi
 .encounter enable
 ```
