@@ -153,6 +153,7 @@ namespace BloodyEncounters.Commands
                 var user = GameData.Users.GetUserByCharacterName(ctx.User.CharacterName.ToString());
                 if (Database.GetBoss(WorldBossName, out BossEncounterModel worldBoss))
                 {
+                    worldBoss.SetHourDespawn();
                     _lastBossSpawnModel = worldBoss;
                     worldBoss.Spawn(user.Entity);
                     

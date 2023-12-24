@@ -131,6 +131,7 @@ namespace BloodyEncounters.DB.Models
                 }
             }
             bossEntity = null;
+            HourDespawn = DateTime.Parse(Hour).AddSeconds(Lifetime).ToString("HH:mm:ss");
             return true;
         }
 
@@ -209,6 +210,12 @@ namespace BloodyEncounters.DB.Models
         {
             Hour = hour;
             HourDespawn = DateTime.Parse(hour).AddSeconds(Lifetime).ToString("HH:mm:ss");
+            Database.saveDatabase();
+        }
+
+        internal void SetHourDespawn()
+        {
+            HourDespawn = DateTime.Now.AddSeconds(Lifetime).ToString("HH:mm:ss");
             Database.saveDatabase();
         }
     }
