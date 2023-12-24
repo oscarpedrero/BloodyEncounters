@@ -51,7 +51,7 @@ public class VBloodSystem_Patch
 
                     if (modelBoss != null)
                     {      
-                        VBloodKillersSystem.AddKiller(vblood.ToString(), user.CharacterName.ToString());
+                        WorldBossSystem.AddKiller(vblood.ToString(), user.CharacterName.ToString());
                         lastKillerUpdate[vblood.ToString()] = DateTime.Now;
                         checkKiller = true;
                     }
@@ -60,23 +60,16 @@ public class VBloodSystem_Patch
         }
         else if (checkKiller)
         {
-            Plugin.Logger.LogInfo("1");
             var didSkip = false;
             foreach (KeyValuePair<string, DateTime> kvp in lastKillerUpdate)
             {
 
-
-                Plugin.Logger.LogInfo("2");
-
                 var lastUpdateTime = kvp.Value;
-                Plugin.Logger.LogInfo("3");
                 if (DateTime.Now - lastUpdateTime < TimeSpan.FromSeconds(SendMessageDelay))
                 {
-                    Plugin.Logger.LogInfo("4");
                     didSkip = true;
                     continue;
                 }
-                Plugin.Logger.LogInfo("5");
                 var modelBoss = Database.WORLDBOSS.Where(x => x.AssetName == kvp.Key && x.bossEntity != null).FirstOrDefault();
                 if (modelBoss != null)
                 {
@@ -96,22 +89,14 @@ public class VBloodSystem_Patch
                         if (entity.Equals(modelBoss.bossEntity))
                         {
                             WorldBossCommand._lastBossSpawnModel = null;
-                            VBloodKillersSystem.SendAnnouncementMessage(kvp.Key, modelBoss);
+                            WorldBossSystem.SendAnnouncementMessage(kvp.Key, modelBoss);
                             break;
                         }
                     }
-                } else
-                {
-                    Plugin.Logger.LogInfo("ES NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
                 }
             }
-            Plugin.Logger.LogInfo($"6 {didSkip}");
             checkKiller = didSkip;
         }
-                        
-                    
-
-
         
     }
 }

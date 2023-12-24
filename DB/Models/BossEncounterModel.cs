@@ -1,4 +1,5 @@
-﻿using BloodyEncounters.Configuration;
+﻿using Bloodstone.API;
+using BloodyEncounters.Configuration;
 using BloodyEncounters.Exceptions;
 using BloodyEncounters.Services;
 using BloodyEncounters.Systems;
@@ -18,6 +19,8 @@ namespace BloodyEncounters.DB.Models
     {
         public string name { get; set; } = string.Empty;
         public string AssetName { get; set; } = string.Empty;
+        public string Hour { get; set; } = string.Empty;
+        public string HourDespawn { get; set; } = string.Empty;
         public int PrefabGUID { get; set; }
         public int level { get; set; }
         public int multiplier { get; set; }
@@ -100,6 +103,11 @@ namespace BloodyEncounters.DB.Models
                 npcModel = GameData.Npcs.FromEntity(e);
                 ModifyBoss(sender, e);
             });
+            var _message = PluginConfig.SpawnMessageBossTemplate.Value;
+            _message = _message.Replace("#time#", FontColorChatSystem.Yellow($"{Lifetime / 60}"));
+            _message = _message.Replace("#worldbossname#", FontColorChatSystem.Yellow($"{name}"));
+
+            ServerChatUtils.SendSystemMessageToAllClients(VWorld.Server.EntityManager, FontColorChatSystem.Green($"{_message}"));
             return true;
         }
 
@@ -109,7 +117,7 @@ namespace BloodyEncounters.DB.Models
             {
                 if (probabilityGeneratingReward(item.Chance))
                 {
-                    var users = VBloodKillersSystem.GetKillers(vblood);
+                    var users = WorldBossSystem.GetKillers(vblood);
                     foreach (var user in users)
                     {
                         var itemGuid = new PrefabGUID(item.ItemID);
@@ -194,6 +202,13 @@ namespace BloodyEncounters.DB.Models
         internal void SetAssetName(string v)
         {
             AssetName = v;
+            Database.saveDatabase();
+        }
+
+        internal void SetHour(string hour)
+        {
+            Hour = hour;
+            HourDespawn = DateTime.Parse(hour).AddSeconds(Lifetime).ToString("HH:mm:ss");
             Database.saveDatabase();
         }
     }

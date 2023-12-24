@@ -57,7 +57,7 @@ namespace BloodyEncounters.Configuration
             NotifyAllPlayersAboutRewards = _mainConfig.Bind("Main", "NotifyAllPlayersAboutRewards", false, "When enabled, all online players are notified about any player's rewards.");
             KillMessageBossTemplate = _mainConfig.Bind("Main", "KillMessageBossTemplate", "The World Boss has been defeated. Congratulations to #user# for beating #vblood#!", "The message that will appear globally once the boss gets killed.");
             SpawnMessageBossTemplate = _mainConfig.Bind("Main", "SpawnMessageBossTemplate", "A World Boss #worldbossname# has been summon you got #time# minutes to defeat it!. Use the command <color=#FBC01E>.encounter worldboss tp</color> to teleport to his position and start the fight!", "The message that will appear globally one the boss gets spawned.");
-            DespawnMessageBossTemplate = _mainConfig.Bind("Main", "DespawnMessageBossTemplate", "You failed to kill the World Boss in time.", "The message that will appear globally if the players failed to kill the boss.");
+            DespawnMessageBossTemplate = _mainConfig.Bind("Main", "DespawnMessageBossTemplate", "You failed to kill the World Boss #worldbossname# in time.", "The message that will appear globally if the players failed to kill the boss.");
             BuffForWorldBoss = _mainConfig.Bind("Main", "BuffForWorldBoss", 1163490655, "Buff that applies to each of the World Bosses that we create with our mod.");
             VBloodFinalConcatCharacters = _mainConfig.Bind("Main", "WorldBossFinalConcatCharacters", "and", "Final string for concat two or more players kill a WorldBoss Boss.");
         }

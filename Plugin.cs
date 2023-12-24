@@ -42,8 +42,6 @@ namespace BloodyEncounters
             GameData.OnInitialize += GameDataOnInitialize;
             GameData.OnDestroy += GameDataOnDestroy;
 
-            GameFrame.Initialize();
-
             CommandRegistry.RegisterAll();
 
             // Plugin startup logic
@@ -82,6 +80,10 @@ namespace BloodyEncounters
             {
                 TimerSystem.StartEncounterTimer();
             }
+
+            GameFrame.Initialize();
+
+            GameFrame.OnUpdate += WorldBossSystem.GameFrameUpdate;
         }
 
         private static void GameDataOnDestroy()

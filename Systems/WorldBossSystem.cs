@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Bloodstone.API;
+using BloodyEncounters.Commands;
 using BloodyEncounters.Configuration;
+using BloodyEncounters.DB;
 using BloodyEncounters.DB.Models;
 using ProjectM;
+using Unity.Collections;
 using VRising.GameData;
 
 /**
@@ -14,11 +18,12 @@ using VRising.GameData;
 **/
 namespace BloodyEncounters.Systems
 {
-    internal class VBloodKillersSystem
+    internal class WorldBossSystem
     {
         
         public static Dictionary<string, HashSet<string>> vbloodKills = new();
-
+        private static DateTime lastDateMinute = DateTime.Now;
+        private static DateTime lastDateSecond = DateTime.Now;
         
         public static void AddKiller(string vblood, string killerCharacterName)
         {
@@ -89,6 +94,44 @@ namespace BloodyEncounters.Systems
             _message = _message.Replace("#user#", $"{sbKillersLabel}");
             _message = _message.Replace("#vblood#", $"{FontColorChatSystem.Red(vbloodLabel)}");
             return FontColorChatSystem.Green($"{_message}");
+        }
+
+        public static void GameFrameUpdate()
+        {
+            var date = DateTime.Now;
+            if(lastDateMinute.ToString("HH:mm") != date.ToString("HH:mm"))
+            {
+                lastDateMinute = date;
+                var spawnsBoss = Database.WORLDBOSS.Where(x => x.Hour == date.ToString("HH:mm")).ToList();
+                if(spawnsBoss != null && GameData.Users.Online.Count() > 0)
+                {
+                    var user = GameData.Users.Online.FirstOrDefault();
+                    foreach(var spawnBoss in spawnsBoss)
+                    {
+                        spawnBoss.Spawn(user.Entity);
+                        WorldBossCommand._lastBossSpawnModel = spawnBoss;
+                    }
+                    
+                }
+            }
+            if (lastDateSecond.ToString("HH:mm:ss") != date.ToString("HH:mm:ss"))
+            {
+                lastDateSecond = date;
+                var despawnsBoss = Database.WORLDBOSS.Where(x => x.HourDespawn == date.ToString("HH:mm:ss") && x.bossEntity != null).ToList();
+                if (despawnsBoss != null && GameData.Users.Online.Count() > 0)
+                {
+                    foreach (var spawnBoss in despawnsBoss)
+                    {
+                        var _message = PluginConfig.DespawnMessageBossTemplate.Value;
+                        _message = _message.Replace("#worldbossname#", FontColorChatSystem.Yellow($"{WorldBossCommand._lastBossSpawnModel.name}"));
+
+                        ServerChatUtils.SendSystemMessageToAllClients(VWorld.Server.EntityManager, FontColorChatSystem.Green($"{_message}"));
+                        WorldBossCommand._lastBossSpawnModel = null;
+                    }
+
+                }
+            }
+
         }
     }
 }

@@ -43,6 +43,7 @@ namespace BloodyEncounters.Commands
         // .encounter worldboss create Test -1391546313 200 2 60 
         // .encounter worldboss items add Test ItemName -257494203 20 1
         // .encounter worldboss set location Test
+        // .encounter worldboss set hour Test 13:20
         // .encounter worldboss start Test
         // 
         [Command("create", usage: "<NameOfBOSS> <PrefabGUIDOfBOSS> <Level> <Multiplier> <LifeTimeSeconds>", description: "Create a World Boss", adminOnly: true)]
@@ -116,6 +117,34 @@ namespace BloodyEncounters.Commands
 
         }
 
+        [Command("set hour", usage: "<NameOfWorldBoss> <Hour>", description: "Adds the hour and minutes in which the world boss spawn.", adminOnly: true)]
+        public void SetHour(ChatCommandContext ctx, string WorldBossName, string hour)
+        {
+            try
+            {
+                var user = GameData.Users.GetUserByCharacterName(ctx.User.CharacterName.ToString());
+                if (Database.GetBoss(WorldBossName, out BossEncounterModel worldBoss))
+                {
+                    worldBoss.SetHour(hour);
+                    ctx.Reply($"Hour {hour} successfully set to WorldBoss '{WorldBossName}'");
+                }
+                else
+                {
+                    throw new WorldBossDontExistException();
+                }
+            }
+            catch (WorldBossDontExistException)
+            {
+                throw ctx.Error($"WorldBoss with name '{WorldBossName}' does not exist.");
+            }
+            catch (Exception e)
+            {
+                throw ctx.Error($"Error: {e.Message}");
+            }
+
+
+        }
+
         [Command("start", usage: "<NameOfWorldBoss>", description: "The confrontation with a World boss begins.", adminOnly: true)]
         public void start(ChatCommandContext ctx, string WorldBossName)
         {
@@ -126,11 +155,7 @@ namespace BloodyEncounters.Commands
                 {
                     _lastBossSpawnModel = worldBoss;
                     worldBoss.Spawn(user.Entity);
-                    var _message = PluginConfig.SpawnMessageBossTemplate.Value;
-                    _message = _message.Replace("#time#", FontColorChatSystem.Yellow($"{worldBoss.Lifetime / 60}"));
-                    _message = _message.Replace("#worldbossname#", FontColorChatSystem.Yellow($"{worldBoss.name}"));
                     
-                    ServerChatUtils.SendSystemMessageToAllClients(VWorld.Server.EntityManager, FontColorChatSystem.Green($"{_message}"));
                 }
                 else
                 {
