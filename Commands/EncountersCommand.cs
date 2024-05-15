@@ -1,12 +1,12 @@
 ﻿using BloodyEncounters.Configuration;
 using BloodyEncounters.Systems;
 using VampireCommandFramework;
-using VRising.GameData;
+using Bloody.Core;
 
 namespace BloodyEncounters.Commands
 {
 
-    [CommandGroup("encounter")]
+    [CommandGroup("be")]
     internal class EncountersCommand
     {
 
@@ -21,7 +21,7 @@ namespace BloodyEncounters.Commands
         [Command("me", usage: "", description: "Starts an encounter for the admin who sends the command.", adminOnly: true)]
         public static void MeCommand(ChatCommandContext ctx)
         {
-            var senderModel = GameData.Users.FromEntity(ctx.Event.SenderUserEntity);
+            var senderModel = Core.Users.FromEntity(ctx.Event.SenderUserEntity);
             EncounterSystem.StartEncounter(senderModel);
             ctx.Reply("Prepare for the fight...");
             return;
@@ -30,7 +30,7 @@ namespace BloodyEncounters.Commands
         [Command("player", usage: "<PlayerName>", description: "Starts an encounter for the given player, for example.", adminOnly: true)]
         public static void PlayerCommand(ChatCommandContext ctx, string PlayerName)
         {
-            var senderModel = GameData.Users.GetUserByCharacterName(PlayerName);
+            var senderModel = Core.Users.GetUserByCharacterName(PlayerName);
             if (senderModel == null)
             {
                 throw ctx.Error($"Player not found");
@@ -51,7 +51,6 @@ namespace BloodyEncounters.Commands
                 throw ctx.Error("Already enabled.");
             }
             PluginConfig.Enabled.Value = true;
-            TimerSystem.StartEncounterTimer();
             ctx.Reply($"Enabled");
         }
 
@@ -63,7 +62,6 @@ namespace BloodyEncounters.Commands
                 throw ctx.Error("Already disabled.");
             }
             PluginConfig.Enabled.Value = false;
-            TimerSystem._encounterTimer.Stop();
             ctx.Reply("Disabled.");
         }
         

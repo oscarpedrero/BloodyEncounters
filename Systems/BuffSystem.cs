@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.Entities;
+using Stunlock.Core;
 
 namespace BloodyEncounters.Systems
 {
@@ -20,7 +21,7 @@ namespace BloodyEncounters.Systems
         public static bool BuffBoss(Entity character, Entity user, PrefabGUID buff, int duration = DEFAULT_DURATION)
         {
 
-            var des = VWorld.Server.GetExistingSystem<DebugEventsSystem>();
+            var des = VWorld.Server.GetExistingSystemManaged<DebugEventsSystem>();
             var buffEvent = new ApplyBuffDebugEvent()
             {
                 BuffPrefabGUID = buff
@@ -90,7 +91,7 @@ namespace BloodyEncounters.Systems
         {
 
             ClearExtraBuffs(character);
-            var des = VWorld.Server.GetExistingSystem<DebugEventsSystem>();
+            var des = VWorld.Server.GetExistingSystemManaged<DebugEventsSystem>();
             var buffEvent = new ApplyBuffDebugEvent()
             {
                 BuffPrefabGUID = buff

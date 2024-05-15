@@ -5,7 +5,7 @@ using VampireCommandFramework;
 
 namespace BloodyEncounters.Commands
 {
-    [CommandGroup("encounter npc")]
+    [CommandGroup("be npc")]
     internal class NpcCommand
     {
 

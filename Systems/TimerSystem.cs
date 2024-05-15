@@ -1,36 +1,24 @@
-﻿using BloodyEncounters.Components;
+﻿using Bloody.Core.Patch.Server;
 using BloodyEncounters.Configuration;
+using BloodyEncounters.DB;
 using System;
 
 namespace BloodyEncounters.Systems
 {
     internal class TimerSystem
     {
-        public static Timer _encounterTimer;
 
         public static void StartEncounterTimer()
         {
-            _encounterTimer.Start(
-                _ =>
+            Plugin.Logger.LogInfo("Start Timner for encounters");
+            var action = () =>
+            {
+                if (PluginConfig.Enabled.Value)
                 {
-                    Plugin.Logger.LogDebug($"{DateTime.Now.ToString()} Starting an encounter.");
                     EncounterSystem.StartEncounter();
-                },
-                input =>
-                {
-                    if (input is not int onlineUsersCount)
-                    {
-                        Plugin.Logger.LogError("Encounter timer delay function parameter is not a valid integer");
-                        return TimeSpan.MaxValue;
-                    }
-                    if (onlineUsersCount < 1)
-                    {
-                        onlineUsersCount = 1;
-                    }
-                    var seconds = new Random().Next(PluginConfig.EncounterTimerMin.Value, PluginConfig.EncounterTimerMax.Value);
-                    Plugin.Logger.LogDebug($"{DateTime.Now.ToString()} Next encounter will start in {seconds / onlineUsersCount} seconds.");
-                    return TimeSpan.FromSeconds(seconds) / onlineUsersCount;
-                });
+                }
+            };
+            ActionSchedulerPatch.RunActionEveryInterval(action, new Random().Next(PluginConfig.EncounterTimerMin.Value, PluginConfig.EncounterTimerMax.Value));
         }
     }
 }

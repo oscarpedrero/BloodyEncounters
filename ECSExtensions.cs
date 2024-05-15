@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Bloodstone.API;
 using Il2CppInterop.Runtime;
 using ProjectM;
+using Stunlock.Core;
 using Unity.Entities;
 
 namespace BloodyEncounters;
@@ -102,7 +103,7 @@ public static class ECSExtensions
 
     public static string LookupName(this PrefabGUID prefabGuid)
 	{
-		var prefabCollectionSystem = VWorld.Server.GetExistingSystem<PrefabCollectionSystem>();
+		var prefabCollectionSystem = VWorld.Server.GetExistingSystemManaged<PrefabCollectionSystem>();
 		return (prefabCollectionSystem.PrefabGuidToNameDictionary.ContainsKey(prefabGuid)
 			? prefabCollectionSystem.PrefabGuidToNameDictionary[prefabGuid] + " " + prefabGuid : "GUID Not Found").ToString();
 	}

@@ -1,13 +1,13 @@
 ﻿using BloodyEncounters.Exceptions;
-using BloodyEncounters.Services;
 using ProjectM;
-using System;
+using Stunlock.Core;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Entities;
 using Unity.Mathematics;
-using VRising.GameData;
-using VRising.GameData.Models;
+using Bloody.Core.Models;
+using Bloody.Core;
+using Bloody.Core.API;
 
 namespace BloodyEncounters.DB.Models
 {
@@ -15,6 +15,7 @@ namespace BloodyEncounters.DB.Models
     {
         public string name { get; set; } = string.Empty;
         public int PrefabGUID { get; set; }
+        public string AssetName { get; set; } = string.Empty;
         public int levelAbove { get; set; }
         public List<ItemEncounterModel> items { get; set; } = new();
         public Entity npcEntity { get; set; } = new();
@@ -78,9 +79,9 @@ namespace BloodyEncounters.DB.Models
         public bool SpawnWithLocation(Entity sender, float3 pos)
         {
 
-            UnitSpawnerService.UnitSpawner.SpawnWithCallback(sender, new PrefabGUID(PrefabGUID), new(pos.x, pos.z), Lifetime, (Entity e) => {
+            SpawnSystem.SpawnUnitWithCallback(sender, new PrefabGUID(PrefabGUID), new(pos.x, pos.z), Lifetime, (Entity e) => {
                 npcEntity = e;
-                npcModel = GameData.Npcs.FromEntity(npcEntity);
+                npcModel = Core.Npcs.FromEntity(npcEntity);
                 ModifyNPC(sender, e);
             });
             return true;
@@ -88,12 +89,13 @@ namespace BloodyEncounters.DB.Models
 
         public void ModifyNPC(Entity user, Entity npc)
         {
-            var playertLevel = GameData.Users.FromEntity(user).Character.Equipment.Level;
+            var playertLevel = Core.Users.FromEntity(user).Character.Equipment.Level;
 
-            var unitLevel = Plugin.World.EntityManager.GetComponentData<UnitLevel>(npc);
-            unitLevel.Level = (int)(playertLevel + levelAbove);
+            var unitLevel = Core.World.EntityManager.GetComponentData<UnitLevel>(npc);
+            int level = (int)(playertLevel + levelAbove);
+            unitLevel.Level = new ModifiableInt(level);
 
-            Plugin.World.EntityManager.SetComponentData(npc, unitLevel);
+            Core.World.EntityManager.SetComponentData(npc, unitLevel);
 
             // TODO: Under Investigate
             RenameNPCt(npc, name);

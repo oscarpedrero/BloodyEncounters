@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.Entities;
-using VRising.GameData.Models;
-using VRising.GameData;
+using Bloody.Core.Models;
+using Bloody.Core;
 using BloodyEncounters.DB.Models;
 using BloodyEncounters.DB;
 

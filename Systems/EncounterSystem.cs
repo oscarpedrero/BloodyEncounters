@@ -7,16 +7,18 @@ using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using VRising.GameData.Models;
-using VRising.GameData;
+using Bloody.Core.Models;
+using Bloody.Core;
 using System.Collections.Concurrent;
-using VRising.GameData.Methods;
+using Bloody.Core.Methods;
 using BloodyEncounters.DB;
 using BloodyEncounters.DB.Models;
 using BloodyEncounters.Configuration;
 using BloodyEncounters.Utils;
-using BloodyEncounters.Services;
-using BloodyEncounters.Patch;
+using Stunlock.Core;
+using Bloodstone.API;
+using Bloody.Core.API;
+using UnityEngine.Rendering.HighDefinition;
 
 namespace BloodyEncounters.Systems
 {
@@ -26,129 +28,79 @@ namespace BloodyEncounters.Systems
 
         private static readonly ConcurrentDictionary<int, UserModel> NpcPlayerMap = new();
 
+        private static PrefabCollectionSystem _prefabCollectionSystem = Plugin.SystemsCore.PrefabCollectionSystem;
+
         internal static Dictionary<long, (float actualDuration, Action<Entity> Actions)> PostActions = new();
 
         public static System.Random Random = new System.Random();
+
+        public static bool EncounterStarted = false;
 
         private static string MessageTemplate => PluginConfig.EncounterMessageTemplate.Value;
 
         internal static void Initialize()
         {
-            ServerEvents.OnDeath += ServerEvents_OnDeath;
-            ServerEvents.OnUnitSpawned += ServerEvents_OnUnitSpawned;
+            EventsHandlerSystem.OnDeath += ServerEvents_OnDeath;
         }
 
         internal static void Destroy()
         {
-            ServerEvents.OnDeath -= ServerEvents_OnDeath;
-            ServerEvents.OnUnitSpawned -= ServerEvents_OnUnitSpawned;
+            EventsHandlerSystem.OnDeath -= ServerEvents_OnDeath;
         }
 
         internal static void StartEncounter(UserModel user = null)
         {
-            var world = Plugin.World;
-
-            if (user == null)
+            if (!EncounterStarted)
             {
-                var users = GameData.Users.Online.Where(u => GameData.Users.FromEntity(u.Entity).Character.Equipment.Level >= PluginConfig.EncounterMinLevel.Value);
+                var world = Core.World;
 
-                if (PluginConfig.SkipPlayersInCastle.Value)
+                if (user == null)
                 {
-                    users = users.Where(u => !u.IsInCastle());
+                    var users = Core.Users.Online.Where(u => Core.Users.FromEntity(u.Entity).Character.Equipment.Level >= PluginConfig.EncounterMinLevel.Value);
+
+                    if (PluginConfig.SkipPlayersInCastle.Value)
+                    {
+                        users = users.Where(u => !u.IsInCastle());
+                    }
+
+                    if (PluginConfig.SkipPlayersInCombat.Value)
+                    {
+                        users = users.Where(u => !u.IsInCombat());
+                    }
+
+                    user = users.OrderBy(_ => Random.Next()).FirstOrDefault();
                 }
 
-                if (PluginConfig.SkipPlayersInCombat.Value)
+                if (user == null)
                 {
-                    users = users.Where(u => !u.IsInCombat());
+                    Plugin.Logger.LogMessage("Could not find any eligible players for a random encounter...");
+                    return;
                 }
-                
-                user = users.OrderBy(_ => Random.Next()).FirstOrDefault();
-            }
 
-            if (user == null)
-            {
-                Plugin.Logger.LogMessage("Could not find any eligible players for a random encounter...");
-                return;
-            }
+                var npc = DataFactory.GetRandomNpc();
 
-            var npc = DataFactory.GetRandomNpc();
-            
-            if (npc == null)
-            {
-                Plugin.Logger.LogWarning($"Could not find any NPCs");
-                return;
-            }
-            Plugin.Logger.LogMessage($"Attempting to start a new encounter for {user.CharacterName} with {npc.name}");
-            try
-            {
-
-                NpcPlayerMap[npc.PrefabGUID] = user;
-                npc.SpawnWithLocation(user.Entity, user.Position);
-
-            }
-            catch (Exception ex)
-            {
-                Plugin.Logger.LogError(ex);
-                // Suppress
-            }
-        }
-
-        public static void ServerEvents_OnUnitSpawned(World world, Entity entity)
-        {
-
-
-            var entityManager = world.EntityManager;
-            if (!entityManager.HasComponent<PrefabGUID>(entity))
-            {
-                return;
-            }
-  
-            var prefabGuid = entityManager.GetComponentData<PrefabGUID>(entity);
-            if (!NpcPlayerMap.TryGetValue(prefabGuid.GuidHash, out var user))
-            {
-                return;
-            }
-            if (!entityManager.HasComponent<LifeTime>(entity))
-            {
-                return;
-            }
-          
-            if (!Database.GetNPCFromEntity(entity, out NpcEncounterModel npc))
-            {
-                return;
-            }
-           
-            var lifeTime = entityManager.GetComponentData<LifeTime>(entity);
-            if (Math.Abs(lifeTime.Duration - npc.Lifetime) > 0.001)
-            {
-                return;
-            }
-      
-            NpcPlayerMap.TryRemove(prefabGuid.GuidHash, out _);
-            
-            if (!RewardsMap.ContainsKey(user.PlatformId))
-            {
-                RewardsMap[user.PlatformId] = new ConcurrentDictionary<int, ItemEncounterModel>();
-            }
-          
-            var message =
-                string.Format(
-                    MessageTemplate,
-                    npc.name, npc.Lifetime);
-
-            user.SendSystemMessage(message);
-            Plugin.Logger.LogDebug($"Encounters started: {user.CharacterName} vs. {npc.name}");
-  
-            if (PluginConfig.NotifyAdminsAboutEncountersAndRewards.Value)
-            {
-                var onlineAdmins = GameData.Users.Online.Where(x => x.IsAdmin == true);
-                foreach (var onlineAdmin in onlineAdmins)
+                if (npc == null)
                 {
-                    onlineAdmin.SendSystemMessage($"Encounter started: {user.CharacterName} vs. {npc.name}");
+                    Plugin.Logger.LogWarning($"Could not find any NPCs");
+                    return;
+                }
+                Plugin.Logger.LogMessage($"Attempting to start a new encounter for {user.CharacterName} with {npc.name}");
+                try
+                {
+
+                    NpcPlayerMap[npc.PrefabGUID] = user;
+                    npc.SpawnWithLocation(user.Entity, user.Position);
+                    EncounterStarted = true;
+
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Logger.LogError(ex);
+                    EncounterStarted = false;
+                    // Suppress
                 }
             }
             
-            RewardsMap[user.PlatformId][entity.Index] = DataFactory.GetRandomItem(npc);
         }
 
         public static void ServerEvents_OnDeath(DeathEventListenerSystem sender, NativeArray<DeathEvent> deathEvents)
@@ -161,43 +113,72 @@ namespace BloodyEncounters.Systems
                 }
 
                 var playerCharacter = sender.EntityManager.GetComponentData<PlayerCharacter>(deathEvent.Killer);
-                var userModel = GameData.Users.FromEntity(playerCharacter.UserEntity);
+                var userModel = Core.Users.FromEntity(playerCharacter.UserEntity);
+                var npcGUID = deathEvent.Died.Read<PrefabGUID>();
+                var npc = _prefabCollectionSystem._PrefabDataLookup[npcGUID].AssetName;
 
+                var modelNpc = Database.NPCS.Where(x => x.AssetName == npc.ToString()).FirstOrDefault();
 
-                if (RewardsMap.TryGetValue(userModel.PlatformId, out var bounties) &&
-                    bounties.TryGetValue(deathEvent.Died.Index, out var itemModel))
+                if (modelNpc == null)
                 {
-                    var itemGuid = new PrefabGUID(itemModel.ItemID);
-                    var quantity = itemModel.Stack;
-                    if (!userModel.TryGiveItem(new PrefabGUID(itemModel.ItemID), quantity, out _))
-                    {
-                        userModel.DropItemNearby(itemGuid, quantity);
-                    }
-                    var message = string.Format(PluginConfig.RewardMessageTemplate.Value, itemModel.Color, itemModel.name);
-                    userModel.SendSystemMessage(message);
-                    bounties.TryRemove(deathEvent.Died.Index, out _);
-                    Plugin.Logger.LogDebug($"{userModel.CharacterName} earned reward: {itemModel.name}");
-                    var globalMessage = string.Format(PluginConfig.RewardAnnouncementMessageTemplate.Value,
-                        userModel.CharacterName, itemModel.Color, itemModel.name);
-                    if (PluginConfig.NotifyAllPlayersAboutRewards.Value)
-                    {
-                        var onlineUsers = GameData.Users.Online;
-                        foreach (var model in onlineUsers.Where(u => u.PlatformId != userModel.PlatformId))
-                        {
-                            model.SendSystemMessage(globalMessage);
-                        }
+                    EncounterStarted = false;
+                    continue;
+                }
+                var modelItem = DataFactory.GetRandomItem(modelNpc);
 
-                    }
-                    else if (PluginConfig.NotifyAdminsAboutEncountersAndRewards.Value)
+
+                var itemGuid = new PrefabGUID(modelItem.ItemID);
+                var quantity = modelItem.Stack;
+                if (!userModel.TryGiveItem(itemGuid, quantity, out _))
+                {
+                    Plugin.Logger.LogError($"{userModel.CharacterName} Error Drop {modelItem.name}");
+                }
+                var message = string.Format(PluginConfig.RewardMessageTemplate.Value, modelItem.Color, modelItem.name);
+                userModel.SendSystemMessage(message);
+                Plugin.Logger.LogDebug($"{userModel.CharacterName} earned reward: {modelItem.name}");
+                var globalMessage = string.Format(PluginConfig.RewardAnnouncementMessageTemplate.Value, userModel.CharacterName, modelItem.Color, modelItem.name);
+                if (PluginConfig.NotifyAllPlayersAboutRewards.Value)
+                {
+                    var onlineUsers = Core.Users.Online;
+                    foreach (var model in onlineUsers.Where(u => u.PlatformId != userModel.PlatformId))
                     {
-                        var onlineAdmins = GameData.Users.Online.Where(x => x.IsAdmin == true);
-                        foreach (var onlineAdmin in onlineAdmins)
-                        {
-                            onlineAdmin.SendSystemMessage($"{userModel.CharacterName} earned an encounter reward: <color={itemModel.Color}>{itemModel.name}</color>");
-                        }
+                        model.SendSystemMessage(globalMessage);
+                    }
+
+                }
+                else if (PluginConfig.NotifyAdminsAboutEncountersAndRewards.Value)
+                {
+                    var onlineAdmins = Core.Users.Online.Where(x => x.IsAdmin == true);
+                    foreach (var onlineAdmin in onlineAdmins)
+                    {
+                        onlineAdmin.SendSystemMessage($"{userModel.CharacterName} earned an encounter reward: <color={modelItem.Color}>{modelItem.name}</color>");
                     }
                 }
+                    
+                    
+                
+
+                EncounterStarted = false;
+
+
             }
+        }
+
+        private static bool probabilityGeneratingReward(int percentage)
+        {
+            var number = new System.Random().Next(1, 100);
+
+            if (number <= (percentage * 100))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        internal static void OnDeath(DeathEventListenerSystem sender, NativeArray<DeathEvent> deathEvents)
+        {
+            throw new NotImplementedException();
         }
     }
 }
