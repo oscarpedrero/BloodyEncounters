@@ -34,11 +34,9 @@ namespace BloodyEncounters
             _harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
             EventsHandlerSystem.OnInitialize += GameDataOnInitialize;
             EventsHandlerSystem.OnDestroy += GameDataOnDestroy;
-            
 
             CommandRegistry.RegisterAll();
 
-            // Plugin startup logic
             Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
         }
 
@@ -46,6 +44,7 @@ namespace BloodyEncounters
         {
             EventsHandlerSystem.OnInitialize -= GameDataOnInitialize;
             EventsHandlerSystem.OnDestroy -= GameDataOnDestroy;
+            EventsHandlerSystem.OnGameFrameUpdate -= TimerSystem.OnGameFrame;
             Config.Clear();
             EncounterSystem.Destroy();
             _harmony?.UnpatchSelf();
@@ -69,6 +68,8 @@ namespace BloodyEncounters
             PluginConfig.Initialize();
 
             EncounterSystem.Initialize();
+
+            EventsHandlerSystem.OnGameFrameUpdate += TimerSystem.OnGameFrame;
 
             if (PluginConfig.Enabled.Value)
             {
