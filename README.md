@@ -7,8 +7,12 @@
 <details>
 <summary>Changelog</summary>
 
+`2.0.3`
+- Fixed the bug that the encounter spawn had. A new spawn system has been generated to avoid incompatibilities with other mods
+- Fixed bug that caused the BloodyEncounter reward system and death message to also affect the game's default NPC if the NPC Prefab was configured as BloodyEncounter.
+
 `2.0.0`
-- World boss functionality has been removed to create a standalone mod called BloodyBoss
+- World boss functionality has been removed to create a standalone mod called [BloodyBoss](https://github.com/oscarpedrero/BloodyBoss)
 - Updated to a VRising 1.0
 
 `1.5.0`

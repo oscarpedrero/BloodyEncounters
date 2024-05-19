@@ -8,11 +8,15 @@ using Unity.Mathematics;
 using Bloody.Core.Models;
 using Bloody.Core;
 using Bloody.Core.API;
+using Unity.Collections;
+using Bloody.Core.Helper;
 
 namespace BloodyEncounters.DB.Models
 {
     internal class NpcEncounterModel
     {
+        internal string nameHash;
+
         public string name { get; set; } = string.Empty;
         public int PrefabGUID { get; set; }
         public string AssetName { get; set; } = string.Empty;
@@ -97,23 +101,33 @@ namespace BloodyEncounters.DB.Models
 
             Core.World.EntityManager.SetComponentData(npc, unitLevel);
 
-            // TODO: Under Investigate
-            RenameNPCt(npc, name);
+            RenameNPC(npc);
 
         }
 
-        private static void RenameNPCt(Entity merchant, string nameMerchant)
+        private void RenameNPC(Entity boss)
         {
-            /*var nameable = new NameableInteractableComponent();
-            nameable.name = nameMerchant;
-            Plugin.World.EntityManager.SetComponentData(merchant, nameable);
-            merchant.WithComponentData((ref NameableInteractable nameable) =>
-            {
-                nameable.Name = nameMerchant;
-                return;
-            });*/
+            boss.Add<NameableInteractable>();
+            NameableInteractable _nameableInteractable = boss.Read<NameableInteractable>();
+            _nameableInteractable.Name = new FixedString64Bytes(nameHash + "be");
+            boss.Write(_nameableInteractable);
+        }
 
-            //var nameable = merchant.Read<Name>;
+        public bool GetNPCEntity()
+        {
+            var entities = QueryComponents.GetEntitiesByComponentTypes<NameableInteractable, LifeTime>(EntityQueryOptions.IncludeDisabledEntities);
+            foreach (var entity in entities)
+            {
+                NameableInteractable _nameableInteractable = entity.Read<NameableInteractable>();
+                if (_nameableInteractable.Name.Value == nameHash + "be")
+                {
+                    npcEntity = entity;
+                    entities.Dispose();
+                    return true;
+                }
+            }
+            entities.Dispose();
+            return false;
         }
 
     }

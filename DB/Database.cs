@@ -66,7 +66,14 @@ namespace BloodyEncounters.DB
             try
             {
                 string json = File.ReadAllText(NPCSListFile);
-                NPCS = JsonSerializer.Deserialize<List<NpcEncounterModel>>(json);
+                var npcList = JsonSerializer.Deserialize<List<NpcEncounterModel>>(json);
+
+                foreach ( var npc in npcList )
+                {
+                    npc.nameHash = npc.name.GetHashCode().ToString();
+                }
+
+                NPCS = npcList;
                 Plugin.Logger.LogDebug($"Load Database: OK");
                 return true;
             }
@@ -117,6 +124,7 @@ namespace BloodyEncounters.DB
             npc = new NpcEncounterModel();
             npc.AssetName = assetName;
             npc.name = NPCName;
+            npc.nameHash = NPCName.GetHashCode().ToString();
             npc.PrefabGUID = prefabGUIDOfNPC;
             npc.levelAbove = levelAbove;
             npc.Lifetime = lifetime;

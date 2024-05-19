@@ -90,6 +90,8 @@ namespace BloodyEncounters.Systems
 
                     NpcPlayerMap[npc.PrefabGUID] = user;
                     npc.SpawnWithLocation(user.Entity, user.Position);
+                    var message = string.Format(MessageTemplate, npc.name, npc.Lifetime);
+                    user.SendSystemMessage(message);
                     EncounterStarted = true;
 
                 }
@@ -124,6 +126,12 @@ namespace BloodyEncounters.Systems
                     EncounterStarted = false;
                     continue;
                 }
+
+                if (!modelNpc.GetNPCEntity())
+                {
+                    continue;
+                }
+
                 var modelItem = DataFactory.GetRandomItem(modelNpc);
 
 
