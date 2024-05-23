@@ -7,6 +7,9 @@
 <details>
 <summary>Changelog</summary>
 
+`2.0.4`
+- Bloody.Core dependency removed as dll and added as framework
+
 `2.0.3`
 - Fixed the bug that the encounter spawn had. A new spawn system has been generated to avoid incompatibilities with other mods
 - Fixed bug that caused the BloodyEncounter reward system and death message to also affect the game's default NPC if the NPC Prefab was configured as BloodyEncounter.
@@ -25,11 +28,13 @@
 ## Mod Features
 BloodyEncounters elevates gameplay by injecting an element of unpredictability and formidable challenges. As players venture outside their castles, there's a chance a random NPC will spawn nearby. You can customize the NPC level difference, ensuring balanced encounters for all players. This mod is highly configurable, offering an array of options to tailor the experience to your preferences.
 
-Ensure the following mods are installed for seamless integration:
+## Requirements:
 
-1. [BepInEx](https://github.com/BepInEx/BepInEx)
-2. [VampireCommandFramework](https://github.com/decaprime/VampireCommandFramework)
-3. [Bloodstone](https://github.com/decaprime/Bloodstone)
+For the correct functioning of this mod you must have the following dependencies installed on your server:
+
+- [BepInExPack V Rising ](https://v-rising.thunderstore.io/package/BepInEx/BepInExPack_V_Rising/) 
+- [VRising.VampireCommandFramework](https://v-rising.thunderstore.io/package/deca/VampireCommandFramework/) 
+- [Bloodstone](https://v-rising.thunderstore.io/package/deca/Bloodstone/) 
 
 ## Installation
 1. Copy `BloodyEncounters.dll` to your `BepInEx/Plugins` directory.

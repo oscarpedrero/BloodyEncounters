@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Entities;
 using Unity.Mathematics;
-using Bloody.Core.Models;
+using Bloody.Core.Models.v1;
 using Bloody.Core;
 using Bloody.Core.API;
 using Unity.Collections;
-using Bloody.Core.Helper;
+using Bloody.Core.Helper.v1;
+using Bloody.Core.API.v1;
+using Bloody.Core.GameData.v1;
 
 namespace BloodyEncounters.DB.Models
 {
@@ -85,7 +87,7 @@ namespace BloodyEncounters.DB.Models
 
             SpawnSystem.SpawnUnitWithCallback(sender, new PrefabGUID(PrefabGUID), new(pos.x, pos.z), Lifetime, (Entity e) => {
                 npcEntity = e;
-                npcModel = Core.Npcs.FromEntity(npcEntity);
+                npcModel = GameData.Npcs.FromEntity(npcEntity);
                 ModifyNPC(sender, e);
             });
             return true;
@@ -93,7 +95,7 @@ namespace BloodyEncounters.DB.Models
 
         public void ModifyNPC(Entity user, Entity npc)
         {
-            var playertLevel = Core.Users.FromEntity(user).Character.Equipment.Level;
+            var playertLevel = GameData.Users.FromEntity(user).Character.Equipment.Level;
 
             var unitLevel = Core.World.EntityManager.GetComponentData<UnitLevel>(npc);
             int level = (int)(playertLevel + levelAbove);

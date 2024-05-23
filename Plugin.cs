@@ -10,20 +10,21 @@ using Bloodstone.Hooks;
 using BloodyEncounters.Configuration;
 using BloodyEncounters.Systems;
 using Bloody.Core;
-using Bloody.Core.API;
+using Bloody.Core.API.v1;
 
 namespace BloodyEncounters
 {
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     [BepInDependency("gg.deca.VampireCommandFramework")]
     [BepInDependency("gg.deca.Bloodstone")]
+    [BepInDependency("trodi.Bloody.Core")]
     public class Plugin : BasePlugin, IRunOnInitialized
     {
         internal static Plugin Instance { get; private set; }
 
         private static Harmony _harmony;
 
-        public static Bloody.Core.Helper.Logger Logger;
+        public static Bloody.Core.Helper.v1.Logger Logger;
         public static SystemsCore SystemsCore;
 
 

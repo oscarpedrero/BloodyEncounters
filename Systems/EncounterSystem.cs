@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Bloody.Core.Models;
+using Bloody.Core.Models.v1;
 using Bloody.Core;
 using System.Collections.Concurrent;
 using Bloody.Core.Methods;
@@ -17,8 +17,9 @@ using BloodyEncounters.Configuration;
 using BloodyEncounters.Utils;
 using Stunlock.Core;
 using Bloodstone.API;
-using Bloody.Core.API;
+using Bloody.Core.API.v1;
 using UnityEngine.Rendering.HighDefinition;
+using Bloody.Core.GameData.v1;
 
 namespace BloodyEncounters.Systems
 {
@@ -56,7 +57,7 @@ namespace BloodyEncounters.Systems
 
                 if (user == null)
                 {
-                    var users = Core.Users.Online.Where(u => Core.Users.FromEntity(u.Entity).Character.Equipment.Level >= PluginConfig.EncounterMinLevel.Value);
+                    var users = GameData.Users.Online.Where(u => GameData.Users.FromEntity(u.Entity).Character.Equipment.Level >= PluginConfig.EncounterMinLevel.Value);
 
                     if (PluginConfig.SkipPlayersInCastle.Value)
                     {
@@ -115,7 +116,7 @@ namespace BloodyEncounters.Systems
                 }
 
                 var playerCharacter = sender.EntityManager.GetComponentData<PlayerCharacter>(deathEvent.Killer);
-                var userModel = Core.Users.FromEntity(playerCharacter.UserEntity);
+                var userModel = GameData.Users.FromEntity(playerCharacter.UserEntity);
                 var npcGUID = deathEvent.Died.Read<PrefabGUID>();
                 var npc = _prefabCollectionSystem._PrefabDataLookup[npcGUID].AssetName;
 
@@ -147,7 +148,7 @@ namespace BloodyEncounters.Systems
                 var globalMessage = string.Format(PluginConfig.RewardAnnouncementMessageTemplate.Value, userModel.CharacterName, modelItem.Color, modelItem.name);
                 if (PluginConfig.NotifyAllPlayersAboutRewards.Value)
                 {
-                    var onlineUsers = Core.Users.Online;
+                    var onlineUsers = GameData.Users.Online;
                     foreach (var model in onlineUsers.Where(u => u.PlatformId != userModel.PlatformId))
                     {
                         model.SendSystemMessage(globalMessage);
@@ -156,7 +157,7 @@ namespace BloodyEncounters.Systems
                 }
                 else if (PluginConfig.NotifyAdminsAboutEncountersAndRewards.Value)
                 {
-                    var onlineAdmins = Core.Users.Online.Where(x => x.IsAdmin == true);
+                    var onlineAdmins = GameData.Users.Online.Where(x => x.IsAdmin == true);
                     foreach (var onlineAdmin in onlineAdmins)
                     {
                         onlineAdmin.SendSystemMessage($"{userModel.CharacterName} earned an encounter reward: <color={modelItem.Color}>{modelItem.name}</color>");

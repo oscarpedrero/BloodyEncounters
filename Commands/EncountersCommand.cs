@@ -2,6 +2,7 @@
 using BloodyEncounters.Systems;
 using VampireCommandFramework;
 using Bloody.Core;
+using Bloody.Core.GameData.v1;
 
 namespace BloodyEncounters.Commands
 {
@@ -21,7 +22,7 @@ namespace BloodyEncounters.Commands
         [Command("me", usage: "", description: "Starts an encounter for the admin who sends the command.", adminOnly: true)]
         public static void MeCommand(ChatCommandContext ctx)
         {
-            var senderModel = Core.Users.FromEntity(ctx.Event.SenderUserEntity);
+            var senderModel = GameData.Users.FromEntity(ctx.Event.SenderUserEntity);
             EncounterSystem.StartEncounter(senderModel);
             ctx.Reply("Prepare for the fight...");
             return;
@@ -30,7 +31,7 @@ namespace BloodyEncounters.Commands
         [Command("player", usage: "<PlayerName>", description: "Starts an encounter for the given player, for example.", adminOnly: true)]
         public static void PlayerCommand(ChatCommandContext ctx, string PlayerName)
         {
-            var senderModel = Core.Users.GetUserByCharacterName(PlayerName);
+            var senderModel = GameData.Users.GetUserByCharacterName(PlayerName);
             if (senderModel == null)
             {
                 throw ctx.Error($"Player not found");

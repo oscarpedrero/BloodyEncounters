@@ -4,7 +4,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<AssemblyName>BloodyEncounters</AssemblyName>
 		<Description>A server side mod for V Rising which spawns a random NPC near a random online player at random intervals, and the player wins a random item reward if the NPC is killed within the given time limit.</Description>
-		<Version>2.0.3</Version>
+		<Version>2.0.4</Version>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<LangVersion>latest</LangVersion>
 		<RestoreSources>
@@ -21,22 +21,9 @@
 		<PackageReference Include="VRising.Unhollowed.Client" Version="1.0.0.*" />
 		<PackageReference Include="VRising.VampireCommandFramework" Version="0.8.*" />
 		<PackageReference Include="VRising.Bloodstone" Version="0.1.*" />
-		<PackageReference Include="Costura.Fody" Version="5.7.0">
-			<!--<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>-->
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="Fody" Version="6.8.0">
-			<!-- <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets> -->
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
+		<PackageReference Include="Bloody.Core" Version="1.2.*" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Reference Include="Bloody.Core">
-			<HintPath>Bloody.Core.dll</HintPath>
-			<Private>true</Private>
-		</Reference>
-	</ItemGroup>
 
 	<Target Name="CopyDLLsServer" AfterTargets="Build">
 		<Message Text="DLL to V Rising Server" Importance="High" />
