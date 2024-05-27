@@ -1,11 +1,12 @@
 ﻿{
   "name": "BloodyEncounters",
-  "version_number": "1.5.0",
+  "version_number": "2.0.4",
   "website_url": "https://github.com/oscarpedrero/BloodyEncounters",
   "description": "A server side mod for V Rising which spawns a random NPC near a random online player at random intervals, and the player wins a random item reward if the NPC is killed within the given time limit.",
   "dependencies": [
     "BepInEx-BepInExPack_V_Rising-1.668.5",
     "deca-Bloodstone-0.1.6",
-    "deca-VampireCommandFramework-0.8.0"
+    "deca-VampireCommandFramework-0.9.0",
+    "Trodi-BloodyCore-1.2.2"
   ]
 }

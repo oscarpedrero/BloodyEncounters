@@ -1,10 +1,6 @@
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K8ENRQY)
-
 # BloodyEncounters
 
 **BloodyEncounters** represents an enhanced iteration of the RandonmEncounters mod by [@adainrivers](https://github.com/adainrivers), functioning as a server-side mod that introduces a thrilling dynamic to gameplay. It randomly spawns NPCs near online players at unpredictable intervals, challenging players to defeat these NPCs within a set time limit to earn random item rewards.
-
-![BloodyEncounters](https://github.com/oscarpedrero/BloodyEncounters/blob/master/Images/BloodyEncounters.png?raw=true)
 
 <details>
 <summary>Changelog</summary>
@@ -27,6 +23,10 @@
 - Initial public release of the mod
 </details>
 
+# Support this project
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K8ENRQY)
+
 ## Mod Features
 BloodyEncounters elevates gameplay by injecting an element of unpredictability and formidable challenges. As players venture outside their castles, there's a chance a random NPC will spawn nearby. You can customize the NPC level difference, ensuring balanced encounters for all players. This mod is highly configurable, offering an array of options to tailor the experience to your preferences.
 
@@ -34,9 +34,10 @@ BloodyEncounters elevates gameplay by injecting an element of unpredictability a
 
 For the correct functioning of this mod you must have the following dependencies installed on your server:
 
-- [BepInExPack V Rising ](https://v-rising.thunderstore.io/package/BepInEx/BepInExPack_V_Rising/) 
-- [VRising.VampireCommandFramework](https://v-rising.thunderstore.io/package/deca/VampireCommandFramework/) 
-- [Bloodstone](https://v-rising.thunderstore.io/package/deca/Bloodstone/) 
+1. [BepInEx](https://thunderstore.io/c/v-rising/p/BepInEx/BepInExPack_V_Rising/)
+2. [Bloodstone](https://thunderstore.io/c/v-rising/p/deca/Bloodstone/)
+3. [VampireCommandFramework](https://thunderstore.io/c/v-rising/p/deca/VampireCommandFramework/)
+4. [Bloody.Core](https://thunderstore.io/c/v-rising/p/Trodi/BloodyCore/)
 
 ## Installation
 1. Copy `BloodyEncounters.dll` to your `BepInEx/Plugins` directory.
@@ -122,5 +123,3 @@ This mod was originally developed by [@adainrivers](https://github.com/adainrive
 **Special thanks to the testers and supporters of the project:**
 
 - @Vex, owner & founder of [Vexor RPG](https://discord.gg/JpVsKVvKNR) server, a tester and great supporter who provided his server as a test platform and took care of all the graphics and documentation.
-
-![Bloody](https://github.com/oscarpedrero/BloodyMerchant/blob/master/Images/Bloody.png?raw=true)
