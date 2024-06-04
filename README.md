@@ -6,7 +6,10 @@
 <summary>Changelog</summary>
 
 `2.0.4`
-- Bloody.Core dependency removed as dll and added as framework
+- Update Timer Systems
+
+`2.0.4`
+- Bloody.Core dependency removed as dll and added as frameworkrk
 
 `2.0.3`
 - Fixed the bug that the encounter spawn had. A new spawn system has been generated to avoid incompatibilities with other mods
