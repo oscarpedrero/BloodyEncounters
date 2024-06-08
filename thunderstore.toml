@@ -6,7 +6,7 @@ namespace = "Trodi"
 name = "BloodyEncounters"
 versionNumber = "2.0.4"
 description = "A server side mod for V Rising which spawns a random NPC near a random online player at random intervals, and the player wins a random item reward if the NPC is killed within the given time limit."
-websiteUrl = "https://github.com/oscarpedrero/BloodyNotify"
+websiteUrl = "https://github.com/oscarpedrero/BloodyEncounters"
 containsNsfwContent = false
 
 [package.dependencies]
@@ -28,4 +28,4 @@ target = ""
 communities = ["v-rising"]
 repository = "https://thunderstore.io"
 [publish.categories]
-v-rising = ["gloomrot-update", "mods", "server"]
+v-rising = ["1-0-update", "mods", "server"]

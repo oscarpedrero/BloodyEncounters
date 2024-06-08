@@ -17,7 +17,7 @@ namespace BloodyEncounters.Systems
             {
                 if (PluginConfig.Enabled.Value)
                 {
-                    Plugin.Logger.LogInfo($"Encounters Timer");
+                    //Plugin.Logger.LogInfo($"Encounters Timer");
                     var startAction = () =>
                     {
                         EncounterSystem.StartEncounter();
