@@ -2,8 +2,18 @@
 
 **BloodyEncounters** represents an enhanced iteration of the RandonmEncounters mod by [@adainrivers](https://github.com/adainrivers), functioning as a server-side mod that introduces a thrilling dynamic to gameplay. It randomly spawns NPCs near online players at unpredictable intervals, challenging players to defeat these NPCs within a set time limit to earn random item rewards.
 
+## IMPORTANT NOTE
+
+You must have version 1.2.4 of Bloody.Core installed to be able to use version 2.0.5 or higher of this mod
+
 <details>
 <summary>Changelog</summary>
+
+`2.0.5`
+- Updated the timer system through Coroutine that brings the new version of Bloody.Core
+- Removed the original Drop Table from every NPC you set up.
+- Removed the ability to unlock Trophies by killing a VBlood that you set up for encounters.
+- Eliminate the possibility of tracking VBlood in case they are configured for meetings
 
 `2.0.4`
 - Update Timer Systems

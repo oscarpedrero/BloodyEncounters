@@ -12,6 +12,7 @@ using Unity.Collections;
 using Bloody.Core.Helper.v1;
 using Bloody.Core.API.v1;
 using Bloody.Core.GameData.v1;
+using ProjectM.Shared;
 
 namespace BloodyEncounters.DB.Models
 {
@@ -87,6 +88,28 @@ namespace BloodyEncounters.DB.Models
 
             SpawnSystem.SpawnUnitWithCallback(sender, new PrefabGUID(PrefabGUID), new(pos.x, pos.z), Lifetime, (Entity e) => {
                 npcEntity = e;
+                if(npcEntity.Has<VBloodUnit>())
+                {
+                    var actionVblood = () =>
+                    {
+                        var vbloodunit = npcEntity.Read<VBloodUnit>();
+                        vbloodunit.CanBeTracked = false;
+                        vbloodunit.UnlocksTrophyOnFeed = Trophy.None;
+                        vbloodunit.UnlocksTrophyOnFeedBrutal = Trophy.None;
+                        npcEntity.Write(vbloodunit);
+
+                        var vBloodUnlockTechBuffer = npcEntity.ReadBuffer<VBloodUnlockTechBuffer>();
+                        vBloodUnlockTechBuffer.Clear();
+                    };
+
+                    CoroutineHandler.StartFrameCoroutine(actionVblood, 3, 1);
+                    
+                }
+
+                var dropTableBuffer = npcEntity.ReadBuffer<DropTableBuffer>();
+                dropTableBuffer.Clear();
+
+
                 npcModel = GameData.Npcs.FromEntity(npcEntity);
                 ModifyNPC(sender, e);
             });

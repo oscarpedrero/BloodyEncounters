@@ -95,6 +95,13 @@ namespace BloodyEncounters.Systems
                     user.SendSystemMessage(message);
                     EncounterStarted = true;
 
+                    var actionDisableEncounter = () =>
+                    {
+                        EncounterStarted = false;
+                    };
+
+                    CoroutineHandler.StartRepeatingCoroutine(actionDisableEncounter, npc.Lifetime, 1);
+
                 }
                 catch (Exception ex)
                 {
@@ -173,21 +180,5 @@ namespace BloodyEncounters.Systems
             }
         }
 
-        private static bool probabilityGeneratingReward(int percentage)
-        {
-            var number = new System.Random().Next(1, 100);
-
-            if (number <= (percentage * 100))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        internal static void OnDeath(DeathEventListenerSystem sender, NativeArray<DeathEvent> deathEvents)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -4,7 +4,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<AssemblyName>BloodyEncounters</AssemblyName>
 		<Description>A server side mod for V Rising which spawns a random NPC near a random online player at random intervals, and the player wins a random item reward if the NPC is killed within the given time limit.</Description>
-		<Version>2.0.4</Version>
+		<Version>2.0.5</Version>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<LangVersion>latest</LangVersion>
 		<RestoreSources>
@@ -21,7 +21,7 @@
 		<PackageReference Include="VRising.Unhollowed.Client" Version="1.0.*" />
 		<PackageReference Include="VRising.VampireCommandFramework" Version="0.9.*" />
 		<PackageReference Include="VRising.Bloodstone" Version="0.2.*" />
-		<PackageReference Include="Bloody.Core" Version="1.2.3" />
+		<PackageReference Include="Bloody.Core" Version="1.2.4" />
 	</ItemGroup>
 
 
