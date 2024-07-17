@@ -11,6 +11,7 @@ You must have version 1.2.4 of Bloody.Core installed to be able to use version 2
 - Complete refactoring of the mod.
 - Added the functionality that if an NPC has the group value filled, it spawns all the NPCs in that group.
 - Added the ability to modify npc statistics.
+- Fixed bug that caused all npcs like those configured in the mod to drop the configured items when they were not part of the encounter
 
 ```json
 [
