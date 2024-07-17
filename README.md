@@ -6,7 +6,7 @@
 
 You must have version 1.2.4 of Bloody.Core installed to be able to use version 2.0.5 or higher of this mod
 
-## NEW IN 2.1.0
+## NEW IN 3.0.0
 
 - Complete refactoring of the mod.
 - Added the functionality that if an NPC has the group value filled, it spawns all the NPCs in that group.
@@ -71,7 +71,7 @@ You must have version 1.2.4 of Bloody.Core installed to be able to use version 2
 <details>
 <summary>Changelog</summary>
 
-`2.1.0`
+`3.0.0`
 - Complete refactoring of the mod
 - Added an optional extar parameter called "group" to the NPC add command
 - Added option in the mod configuration for the default message of the groups
