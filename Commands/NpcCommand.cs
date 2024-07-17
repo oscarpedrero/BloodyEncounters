@@ -1,4 +1,4 @@
-﻿using BloodyEncounters.DB;
+﻿using BloodyEncounters.Data;
 using BloodyEncounters.Exceptions;
 using System;
 using VampireCommandFramework;
@@ -25,17 +25,18 @@ namespace BloodyEncounters.Commands
             foreach (var npc in npcs)
             {
                 ctx.Reply($"NPC {npc.name}");
+                ctx.Reply($"Group {npc.Group}");
                 ctx.Reply($"--");
             }
             ctx.Reply($"----------------------------");
         }
 
-        [Command("create", usage: "<NameOfNPC> <PrefabGUIDOfNPC> <LevelsAbovePlayer> <LifeTime>", description: "Create a NPC", adminOnly: true)]
-        public void CreateNPC(ChatCommandContext ctx, string npcName, int prefabGUID, int levelAbove, int lifeTime)
+        [Command("create", usage: "<NameOfNPC> <PrefabGUIDOfNPC> <LevelsAbovePlayer> <LifeTime> <Group>", description: "Create a NPC", adminOnly: true)]
+        public void CreateNPC(ChatCommandContext ctx, string npcName, int prefabGUID, int levelAbove, int lifeTime, string group = "")
         {
             try
             {
-                if (Database.AddNPC(npcName, prefabGUID, levelAbove, lifeTime))
+                if (Database.AddNPC(npcName, prefabGUID, levelAbove, lifeTime, group))
                 {
                     ctx.Reply($"NPC '{npcName}' created successfully");
                 }

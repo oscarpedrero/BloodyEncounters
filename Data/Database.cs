@@ -1,6 +1,5 @@
 ﻿using BepInEx;
-using Bloodstone.API;
-using BloodyEncounters.DB.Models;
+using BloodyEncounters.Data.Models;
 using BloodyEncounters.Exceptions;
 using ProjectM;
 using Stunlock.Core;
@@ -10,10 +9,11 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using Unity.Entities;
+using Bloody.Core;
 
-namespace BloodyEncounters.DB
+namespace BloodyEncounters.Data
 {
-    internal static class Database
+    internal class Database
     {
         private static readonly Random Random = new();
 
@@ -27,15 +27,6 @@ namespace BloodyEncounters.DB
             createDatabaseFiles();
             loadDatabase();
         }
-
-        /*
-         * 
-         * 
-         * DATABASE
-         * 
-         * 
-         * 
-         */
 
         public static bool createDatabaseFiles()
         {
@@ -68,7 +59,7 @@ namespace BloodyEncounters.DB
                 string json = File.ReadAllText(NPCSListFile);
                 var npcList = JsonSerializer.Deserialize<List<NpcEncounterModel>>(json);
 
-                foreach ( var npc in npcList )
+                foreach (var npc in npcList)
                 {
                     npc.nameHash = npc.name.GetHashCode().ToString();
                 }
@@ -84,15 +75,6 @@ namespace BloodyEncounters.DB
             }
         }
 
-        /*
-         * 
-         * 
-         * NPC
-         * 
-         * 
-         * 
-         */
-
         public static bool GetNPC(string NPCName, out NpcEncounterModel npc)
         {
             npc = NPCS.Where(x => x.name == NPCName).FirstOrDefault();
@@ -103,7 +85,7 @@ namespace BloodyEncounters.DB
             return true;
         }
 
-        public static bool GetNPCFromEntity(Entity npcEntity , out NpcEncounterModel npc)
+        public static bool GetNPCFromEntity(Entity npcEntity, out NpcEncounterModel npc)
         {
             npc = NPCS.Where(x => x.npcEntity.Equals(npcEntity)).FirstOrDefault();
             if (npc == null)
@@ -113,7 +95,7 @@ namespace BloodyEncounters.DB
             return true;
         }
 
-        public static bool AddNPC(string NPCName, int prefabGUIDOfNPC, int levelAbove, int lifetime)
+        public static bool AddNPC(string NPCName, int prefabGUIDOfNPC, int levelAbove, int lifetime, string group)
         {
             if (GetNPC(NPCName, out NpcEncounterModel npc))
             {
@@ -121,6 +103,7 @@ namespace BloodyEncounters.DB
             }
 
             var assetName = Plugin.SystemsCore.PrefabCollectionSystem._PrefabDataLookup[new PrefabGUID(prefabGUIDOfNPC)].AssetName.ToString();
+            Entity npcEntity = Plugin.SystemsCore.PrefabCollectionSystem._PrefabGuidToEntityMap[new PrefabGUID(prefabGUIDOfNPC)];
             npc = new NpcEncounterModel();
             npc.AssetName = assetName;
             npc.name = NPCName;
@@ -128,7 +111,11 @@ namespace BloodyEncounters.DB
             npc.PrefabGUID = prefabGUIDOfNPC;
             npc.levelAbove = levelAbove;
             npc.Lifetime = lifetime;
+            npc.Group = group;
 
+            var NpcUnitStats = npcEntity.Read<UnitStats>();
+            npc.unitStats = new UnitStatsModel();
+            npc.unitStats.SetStats(NpcUnitStats);
 
             NPCS.Add(npc);
             saveDatabase();
@@ -148,7 +135,6 @@ namespace BloodyEncounters.DB
 
             throw new NPCDontExistException();
         }
-
 
     }
 }

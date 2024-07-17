@@ -6,8 +6,80 @@
 
 You must have version 1.2.4 of Bloody.Core installed to be able to use version 2.0.5 or higher of this mod
 
+## NEW IN 2.1.0
+
+- Complete refactoring of the mod.
+- Added the functionality that if an NPC has the group value filled, it spawns all the NPCs in that group.
+- Added the ability to modify npc statistics.
+
+```json
+[
+ {
+    "name": "Rifle Man",
+    "PrefabGUID": 1148936156,
+    "AssetName": "CHAR_ChurchOfLight_Rifleman",
+    "levelAbove": 10,
+    "items": [
+      {
+        "name": "Blood Rose Potion",
+        "ItemID": 429052660,
+        "Stack": 25,
+        "Chance": 1,
+        "Color": "#daa520"
+      },
+      {
+        "name": "Blood Token",
+        "ItemID": -77477508,
+        "Stack": 10,
+        "Chance": 1,
+        "Color": "#daa520"
+      }
+    ],
+    "Lifetime": 300,
+    "Group": "Uno",
+    "unitStats": {
+      "PhysicalCriticalStrikeChance": 0,
+      "PhysicalCriticalStrikeDamage": 2,
+      "SpellCriticalStrikeChance": 0,
+      "SpellCriticalStrikeDamage": 2,
+      "PhysicalPower": 45.550457,
+      "SpellPower": 45.550457,
+      "ResourcePower": 28.449999,
+      "SiegePower": 17,
+      "ResourceYieldModifier": 1,
+      "ReducedResourceDurabilityLoss": 1,
+      "PhysicalResistance": 0,
+      "SpellResistance": 0,
+      "SunResistance": 0,
+      "FireResistance": 0,
+      "HolyResistance": 0,
+      "SilverResistance": 0,
+      "SilverCoinResistance": 0,
+      "GarlicResistance": 0,
+      "PassiveHealthRegen": 1,
+      "CCReduction": 0,
+      "HealthRecovery": 1,
+      "DamageReduction": 0,
+      "HealingReceived": 0,
+      "ShieldAbsorbModifier": 1,
+      "BloodEfficiency": 1
+    }
+  }
+]
+```
+
 <details>
 <summary>Changelog</summary>
+
+`2.1.0`
+- Complete refactoring of the mod
+- Added an optional extar parameter called "group" to the NPC add command
+- Added option in the mod configuration for the default message of the groups
+- Added the functionality that if an NPC has the group value filled, it spawns all the NPCs in that group.
+- Added the ability to modify npc statistics.
+
+`2.0.8`
+- Fixed reload command
 
 `2.0.5`
 - Updated the timer system through Coroutine that brings the new version of Bloody.Core
@@ -57,17 +129,18 @@ For the correct functioning of this mod you must have the following dependencies
 2. Launch the server once to generate the config file; configurations will be located in the `BepInEx/Config` directory.
 
 ## Commands
-It's crucial to note that for any command containing a name argument such as `<NameOfNPC>` or `<ItemName>`, if your name consists of more than one word, include it inside `""` to ensure proper functionality (e.g., "Rifle Man" or "Blood Rose Potion").
+It's crucial to note that for any command containing a name argument such as `<NameOfNPC>`, `<ItemName>` or `<GroupName>`, if your name consists of more than one word, include it inside `""` to ensure proper functionality (e.g., "Rifle Man" or "Blood Rose Potion").
 
 ```ansi
-.be npc create <NameOfNPC> <PrefabGUIDOfNPC> <LevelsAbovePlayer> <LifeTime>
+.be npc create <NameOfNPC> <PrefabGUIDOfNPC> <LevelsAbovePlayer> <LifeTime> <GroupName>
 ```
 - Create your desired NPCs to include in the encounter randomized pool.
   - **NameOfNPC**: The NPC name that will appear in the chat when the player triggers an encounter event.
   - **PrefabGUIDOfNPC**: The GUID of the NPC you prefer to use. 
   - **LevelsAbovePlayer**: Specify how many levels you want the NPC to be above the player level. For example, if a player is level 10 and the value is 10, the NPC will spawn at level 20.
   - **LifeTime**: The duration the player has to kill the NPC encounters in seconds.
-  - Example: `.be npc create "Rifle Man" 1148936156 10 300`
+  - **Group** ( Optional ): If you give it a group value, when this NPC touches it it spawns all the NPCS in that group..
+  - Example: `.be npc create "Rifle Man" 1148936156 10 300 "Group One"`
 ```ansi
 .be npc remove <NameOfNPC>
 ```

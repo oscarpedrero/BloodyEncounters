@@ -1,12 +1,4 @@
-﻿using ProjectM;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Bloody.Core;
-
-namespace BloodyEncounters.DB.Models
+﻿namespace BloodyEncounters.Data.Models
 {
     internal class ItemEncounterModel
     {

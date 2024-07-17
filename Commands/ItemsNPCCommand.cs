@@ -1,7 +1,5 @@
-﻿using BloodyEncounters.DB.Models;
-using BloodyEncounters.DB;
-using ProjectM;
-using System.Linq;
+﻿using BloodyEncounters.Data.Models;
+using BloodyEncounters.Data;
 using VampireCommandFramework;
 using BloodyEncounters.Exceptions;
 using System;
@@ -52,7 +50,6 @@ namespace BloodyEncounters.Commands
             
         }
 
-        // .encounter product add Test1 736318803 20
         [Command("add", usage: "<NameOfNPC> <ItemName> <ItemPrefabID> <Stack>", description: "Add a item to a NPC drop", adminOnly: true)]
         public void CreateItem(ChatCommandContext ctx, string NPCName, string ItemName, int ItemPrefabID, int Stack)
         {

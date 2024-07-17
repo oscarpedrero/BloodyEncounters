@@ -1,16 +1,13 @@
 ﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
-using BepInEx.Logging;
-using HarmonyLib;
 using Bloodstone.API;
-using Unity.Entities;
-using VampireCommandFramework;
-using BloodyEncounters.DB;
-using Bloodstone.Hooks;
-using BloodyEncounters.Configuration;
-using BloodyEncounters.Systems;
 using Bloody.Core;
 using Bloody.Core.API.v1;
+using BloodyEncounters.Data;
+using BloodyEncounters.EventsHandler;
+using HarmonyLib;
+using Unity.Entities;
+using VampireCommandFramework;
 
 namespace BloodyEncounters
 {
@@ -18,43 +15,47 @@ namespace BloodyEncounters
     [BepInDependency("gg.deca.VampireCommandFramework")]
     [BepInDependency("gg.deca.Bloodstone")]
     [BepInDependency("trodi.Bloody.Core")]
+    [Bloodstone.API.Reloadable]
     public class Plugin : BasePlugin, IRunOnInitialized
     {
-        internal static Plugin Instance { get; private set; }
-
-        private static Harmony _harmony;
+        Harmony _harmony;
 
         public static Bloody.Core.Helper.v1.Logger Logger;
         public static SystemsCore SystemsCore;
 
-
         public override void Load()
         {
+            // Plugin startup logic
+            Log.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} version {MyPluginInfo.PLUGIN_VERSION} is loaded!");
+
             Logger = new(Log);
+
+            // Harmony patching
             _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             _harmony.PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
+
             EventsHandlerSystem.OnInitialize += GameDataOnInitialize;
             EventsHandlerSystem.OnDestroy += GameDataOnDestroy;
 
+            // Register all commands in the assembly with VCF
             CommandRegistry.RegisterAll();
-
-            Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
         }
 
         public override bool Unload()
         {
+
             EventsHandlerSystem.OnInitialize -= GameDataOnInitialize;
             EventsHandlerSystem.OnDestroy -= GameDataOnDestroy;
-            Config.Clear();
-            EncounterSystem.Destroy();
+            EventsHandlerSystem.OnDeath -= OnDeath.OnDeathEvent;
+
+            CommandRegistry.UnregisterAssembly();
             _harmony?.UnpatchSelf();
-            Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is unloaded!");
             return true;
         }
 
         public void OnGameInitialized()
         {
-            
+
         }
 
         private static void GameDataOnInitialize(World world)
@@ -65,14 +66,11 @@ namespace BloodyEncounters
             Logger.LogInfo("Loading main data");
             Database.Initialize();
             Logger.LogInfo("Binding configuration");
-            PluginConfig.Initialize();
+            Data.Config.Initialize();
+
+            EventsHandlerSystem.OnDeath += OnDeath.OnDeathEvent;
 
             EncounterSystem.Initialize();
-
-            if (PluginConfig.Enabled.Value)
-            {
-                TimerSystem.StartEncounterTimer();
-            }
 
         }
 

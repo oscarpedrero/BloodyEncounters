@@ -1,8 +1,7 @@
-﻿using BloodyEncounters.Configuration;
-using BloodyEncounters.Systems;
+﻿using BloodyEncounters.Data;
 using VampireCommandFramework;
-using Bloody.Core;
 using Bloody.Core.GameData.v1;
+using System;
 
 namespace BloodyEncounters.Commands
 {
@@ -10,6 +9,21 @@ namespace BloodyEncounters.Commands
     [CommandGroup("be")]
     internal class EncountersCommand
     {
+
+        [Command("reload", usage: "", description: "Reload Database Boss", adminOnly: true)]
+        public static void ReloadDatabase(ChatCommandContext ctx)
+        {
+            try
+            {
+                Database.loadDatabase();
+                ctx.Reply($"Boss database reload successfully");
+            }
+            catch (Exception e)
+            {
+                throw ctx.Error($"Error: {e.Message}");
+            }
+
+        }
 
         [Command("start", usage: "", description: "Starts an encounter for a random online user.", adminOnly: true)]
         public static void StartCommand(ChatCommandContext ctx)
@@ -47,22 +61,22 @@ namespace BloodyEncounters.Commands
         [Command("enable", usage: "", description: "Enables the random encounter timer.", adminOnly: true)]
         public static void EnableCommand(ChatCommandContext ctx)
         {
-            if (PluginConfig.Enabled.Value)
+            if (Config.Enabled.Value)
             {
                 throw ctx.Error("Already enabled.");
             }
-            PluginConfig.Enabled.Value = true;
+            Config.Enabled.Value = true;
             ctx.Reply($"Enabled");
         }
 
         [Command("disable", usage: "", description: "Disables the random encounter timer.", adminOnly: true)]
         public static void DisableCommand(ChatCommandContext ctx)
         {
-            if (!PluginConfig.Enabled.Value)
+            if (!Config.Enabled.Value)
             {
                 throw ctx.Error("Already disabled.");
             }
-            PluginConfig.Enabled.Value = false;
+            Config.Enabled.Value = false;
             ctx.Reply("Disabled.");
         }
         

@@ -1,5 +1,4 @@
-﻿using BloodyEncounters.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,10 +6,9 @@ using System.Threading.Tasks;
 using Unity.Entities;
 using Bloody.Core.Models;
 using Bloody.Core;
-using BloodyEncounters.DB.Models;
-using BloodyEncounters.DB;
+using BloodyEncounters.Data.Models;
 
-namespace BloodyEncounters.Utils
+namespace BloodyEncounters.Data
 {
     internal static class DataFactory
     {

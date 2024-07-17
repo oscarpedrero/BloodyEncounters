@@ -1,20 +1,19 @@
-﻿using BloodyEncounters.Exceptions;
+﻿using Bloody.Core;
+using Bloody.Core.API.v1;
+using Bloody.Core.GameData.v1;
+using Bloody.Core.Models.v1;
 using ProjectM;
+using ProjectM.Shared;
 using Stunlock.Core;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Entities;
 using Unity.Mathematics;
-using Bloody.Core.Models.v1;
-using Bloody.Core;
-using Bloody.Core.API;
+using BloodyEncounters.Exceptions;
 using Unity.Collections;
 using Bloody.Core.Helper.v1;
-using Bloody.Core.API.v1;
-using Bloody.Core.GameData.v1;
-using ProjectM.Shared;
 
-namespace BloodyEncounters.DB.Models
+namespace BloodyEncounters.Data.Models
 {
     internal class NpcEncounterModel
     {
@@ -25,9 +24,13 @@ namespace BloodyEncounters.DB.Models
         public string AssetName { get; set; } = string.Empty;
         public int levelAbove { get; set; }
         public List<ItemEncounterModel> items { get; set; } = new();
-        public Entity npcEntity { get; set; } = new();
-        public NpcModel npcModel { get; set; }
         public float Lifetime { get; set; }
+        public string Group { get; set; } = string.Empty;
+        public UnitStatsModel unitStats { get; set; } = null;
+
+        public NpcModel npcModel;
+
+        public Entity npcEntity = new();
 
         public List<ItemEncounterModel> GetItems()
         {
@@ -83,12 +86,12 @@ namespace BloodyEncounters.DB.Models
             throw new ProductDontExistException();
         }
 
-        public bool SpawnWithLocation(Entity sender, float3 pos)
+        public bool Spawn(Entity sender, float3 pos)
         {
 
             SpawnSystem.SpawnUnitWithCallback(sender, new PrefabGUID(PrefabGUID), new(pos.x, pos.z), Lifetime, (Entity e) => {
                 npcEntity = e;
-                if(npcEntity.Has<VBloodUnit>())
+                if (npcEntity.Has<VBloodUnit>())
                 {
                     var actionVblood = () =>
                     {
@@ -97,13 +100,39 @@ namespace BloodyEncounters.DB.Models
                         vbloodunit.UnlocksTrophyOnFeed = Trophy.None;
                         vbloodunit.UnlocksTrophyOnFeedBrutal = Trophy.None;
                         npcEntity.Write(vbloodunit);
-
-                        var vBloodUnlockTechBuffer = npcEntity.ReadBuffer<VBloodUnlockTechBuffer>();
-                        vBloodUnlockTechBuffer.Clear();
                     };
 
                     CoroutineHandler.StartFrameCoroutine(actionVblood, 3, 1);
-                    
+
+                }
+
+                var dropTableBuffer = npcEntity.ReadBuffer<DropTableBuffer>();
+                dropTableBuffer.Clear();
+
+
+                npcModel = GameData.Npcs.FromEntity(npcEntity);
+                ModifyNPC(sender, e);
+            });
+            return true;
+        }
+
+        public bool Spawn(Entity sender, float3 pos, float lifetime)
+        {
+            SpawnSystem.SpawnUnitWithCallback(sender, new PrefabGUID(PrefabGUID), new(pos.x, pos.z), lifetime, (Entity e) => {
+                npcEntity = e;
+                if (npcEntity.Has<VBloodUnit>())
+                {
+                    var actionVblood = () =>
+                    {
+                        var vbloodunit = npcEntity.Read<VBloodUnit>();
+                        vbloodunit.CanBeTracked = false;
+                        vbloodunit.UnlocksTrophyOnFeed = Trophy.None;
+                        vbloodunit.UnlocksTrophyOnFeedBrutal = Trophy.None;
+                        npcEntity.Write(vbloodunit);
+                    };
+
+                    CoroutineHandler.StartFrameCoroutine(actionVblood, 3, 1);
+
                 }
 
                 var dropTableBuffer = npcEntity.ReadBuffer<DropTableBuffer>();
@@ -124,10 +153,26 @@ namespace BloodyEncounters.DB.Models
             int level = (int)(playertLevel + levelAbove);
             unitLevel.Level = new ModifiableInt(level);
 
+            var NpcUnitStats = npc.Read<UnitStats>();
+            if (unitStats == null)
+            {
+                GenerateStats();
+            }
+
+            npc.Write(unitStats.FillStats(NpcUnitStats));
+
             Core.World.EntityManager.SetComponentData(npc, unitLevel);
 
             RenameNPC(npc);
 
+        }
+
+        public void GenerateStats()
+        {
+            Entity npcsEntity = Plugin.SystemsCore.PrefabCollectionSystem._PrefabGuidToEntityMap[new PrefabGUID(PrefabGUID)];
+            var NpcUnitStats = npcsEntity.Read<UnitStats>();
+            unitStats = new UnitStatsModel();
+            unitStats.SetStats(NpcUnitStats);
         }
 
         private void RenameNPC(Entity boss)
@@ -153,6 +198,14 @@ namespace BloodyEncounters.DB.Models
             }
             entities.Dispose();
             return false;
+        }
+
+        internal void KillNpc(Entity user)
+        {
+            if (GetNPCEntity())
+            {
+                StatChangeUtility.KillOrDestroyEntity(Plugin.SystemsCore.EntityManager, npcEntity, user, user, 0, StatChangeReason.Any, true);
+            }
         }
 
     }
